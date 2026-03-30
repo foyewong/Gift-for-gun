@@ -1,0 +1,369 @@
+/* --- 基础变量与重置 --- */
+:root {
+    --bg-color: #080808; /* 更深邃的黑色 */
+    --accent-color: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.6);
+    --transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--accent-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* --- 首页 (Hero) --- */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.hero-content {
+    text-align: center;
+    z-index: 2;
+}
+
+.reveal-text {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.sub-text {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* --- 核心画廊区域 (Gallery) --- */
+.gallery-wrapper {
+    position: relative;
+    /* 高度由 JavaScript 动态设置，通常为 (图片数+1)*100vh */
+}
+
+.sticky-content {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-text {
+    position: absolute;
+    font-size: 25vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- 正方形卡片样式 --- */
+.card-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1500px; /* 增加3D景深 */
+}
+
+.item {
+    position: absolute;
+    /* 核心修改：确保正方形比例 */
+    width: 70vh;  
+    height: 70vh; 
+    max-width: 85vw; /* 适配移动端 */
+    max-height: 85vw;
+    will-change: transform, opacity;
+}
+
+.item-inner {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+    position: relative;
+    cursor: zoom-in;
+    background: #111;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8), 
+                0 0 0 1px rgba(255, 255, 255, 0.05); /* 微弱的边框线 */
+}
+
+.item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 保证 1:1 填充 */
+    transform: scale(1.1); /* 配合 GSAP 动画 */
+    transition: transform 1.2s var(--transition-smooth);
+}
+
+.item:hover img {
+    transform: scale(1.02); /* 悬停微动 */
+}
+
+/* 卡片文字信息 */
+.item-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s var(--transition-smooth);
+}
+
+.item:hover .item-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.item-info h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+/* --- 放大弹窗 (Modal) --- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 4, 4, 0.98);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--transition-smooth);
+    backdrop-filter: blur(10px);
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal img {
+    width: 80vh;
+    height: 80vh;
+    max-width: 90vw;
+    max-height: 90vw;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 0 100px rgba(255,255,255,0.05);
+}
+
+.modal-close {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #fff;
+}
+
+/* --- 结尾 (Footer) --- */
+.footer {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.footer-content h2 {
+    font-size: 4vw;
+    font-weight: 800;
+    opacity: 0.8;
+}
+
+/* --- 移动端适配微调 --- */
+@media (max-width: 768px) {
+    .item {
+        width: 80vw;
+        height: 80vw;
+    }
+    .modal img {
+        width: 90vw;
+        height: 90vw;
+    }
+}
+/* 开启 3D 空间 */
+.card-container {
+    perspective: 2000px; 
+    transform-style: preserve-3d;
+}
+
+.item {
+    position: absolute;
+    width: 70vh; height: 70vh;
+    transform-style: preserve-3d;
+    will-change: transform, opacity, filter;
+}
+
+/* 懒加载中的 loading 效果 */
+.item-loader {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #080808, #1a1a1a, #080808);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+    z-index: 1;
+}
+
+.item.loaded .item-loader {
+    display: none;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* 文字样式升级 */
+.item-text {
+    position: absolute;
+    bottom: -100px;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+}
+
+.item-text span {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+}
+
+.item-text h4 {
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-top: 5px;
+}
+
+/* --- 漫游取景框 (锁定在屏幕) --- */
+.scatter-viewport {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--bg-color);
+    position: relative;
+}
+
+.scatter-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.02);
+    pointer-events: none;
+}
+
+/* --- 巨大的散落画布 --- */
+.scatter-canvas {
+    /* 画布尺寸远超屏幕 */
+    width: 300vw; 
+    height: 300vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* 初始居中，后续由 GSAP 控制移动和缩放 */
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    will-change: transform;
+}
+
+/* --- 散落的正方形照片 --- */
+.scatter-item {
+    position: absolute;
+    width: 25vw; /* 根据画布比例设定的尺寸 */
+    height: 25vw; 
+    min-width: 250px;
+    min-height: 250px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+    cursor: crosshair;
+    /* 悬停时的平滑过渡 */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                z-index 0s, 
+                box-shadow 0.4s;
+    background: #111;
+}
+
+.scatter-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 完美契合 1:1 */
+    filter: grayscale(80%) contrast(1.2); /* 默认带点高级灰度 */
+    transition: filter 0.5s, transform 0.8s;
+}
+
+/* 交互：悬停时摆正、放大、恢复色彩，并盖在最上面 */
+.scatter-item:hover {
+    z-index: 999 !important; /* 强制置顶 */
+    box-shadow: 0 50px 100px rgba(0,0,0,1), 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+.scatter-item:hover img {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.05);
+}
+
+.roam-indicator {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
+}
